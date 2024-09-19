@@ -1,0 +1,379 @@
+---
+title: 'Project 1 (EAS502 : Intro Prob Theory)'
+author: Rishi Shanthan Bhagavatham
+date: "2024-03-19"
+output:
+  pdf_document: default
+  word_document: default
+  html_document:
+    df_print: paged
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+**Submitted to : Dr. Vochita Mihai**
+
+# I. Tossing a coin T
+
+The probability of getting a Heads or a Tails on a coin toss is both
+0.5. We can use R to simulate an experiment of flipping a coin several
+times and compare our results with the theoretical probability. First
+let fix the conventon:
+
+-   0 = Tails and 1 = Heads
+-   We can use the following command to tell R to flip a coin 15 times:
+
+```{r}
+e0 = sample(0:1,15,rep=T)
+e0
+```
+
+**This gives `r sum(e0==0)` Tails and `r sum(e0==1)` heads.**
+
+In fact, we can write a function to flip a coin n times:
+
+```{r}
+FlipCoin = function(n) {
+   sample(0:1,n,rep=T)
+}
+e1=FlipCoin(30)
+e1
+```
+
+Now we can use the sum command to compare the results from this
+experiment to the theoretical probabilities. For example, in the above
+experiment of flipping a coin 30 times, we can count the heads and tails
+as:
+
+```{r}
+sum(e1==0)
+```
+
+```{r}
+sum(e1==0)/30
+```
+
+```{r}
+sum(e1==1)
+```
+
+```{r}
+sum(e1==1)/30
+```
+
+**This gives us `r sum(e1==0)` Tails and `r sum(e1==1)` Heads. The
+“probability” or relative frequency of a Tail in this experiment is
+`r sum(e1==0)/30` and a Head is `r sum(e1==1)/30`**.
+
+**Plotting Histogram**
+
+```{r}
+r<-hist(e1,breaks=c(-0.5,0.5,1.5), 
+        prob=T,main="Histogram of 30 coin Tosses (Group 2)",
+        col="pink",
+        border="white")
+
+label_pos <- r$density - 0.015
+
+text(r$mids,label_pos, r$counts, adj = c(.5, -.5), col = "blue3")
+```
+
+# Questions
+
+**1. Use R to simulate an experiment of tossing a coin 100 times. Print
+the relative histogram as above with your name on it.**
+
+```{r}
+e2 = FlipCoin(100)
+e2
+```
+
+**Relative Histogram**
+
+```{r}
+r <- hist(e2, breaks = c(-0.5, 0.5, 1.5), 
+          prob = TRUE, 
+          main = "Histogram of 100 coin Tosses (Group 2)", 
+          col = "lightblue", 
+          xlab = "Values", 
+          border = "white",)
+
+label_pos <- r$density - 0.01
+
+text(r$mids,label_pos, r$counts, adj = c(.5, -.5), col = "blue3")
+
+```
+
+**QUESTION 2 IS HANDLED AFTER QUESTION 3**
+
+**3. Repeat 2 for tossing a coin 500 times (do not print histogram).**
+
+```{r}
+e3 = FlipCoin(500) #Flipping Coin 500 times
+e3
+```
+
+**2. Find the relative frequency of a Tail and Head in your experiment
+and fill in the table on the next page.**
+
+```{r}
+
+# Create table of frequencies
+freq_table <- matrix(NA, nrow = 2, ncol = 2, 
+                     dimnames = list(c("Relative frequency of Tails", 
+                                       "Relative frequency of Heads"), 
+                                     c("100 tosses", "500 tosses")))
+
+# Frequencies
+freq_table["Relative frequency of Tails", "100 tosses"] <- sum(e2 == 0)/100
+freq_table["Relative frequency of Heads", "100 tosses"] <- sum(e2 == 1)/100
+freq_table["Relative frequency of Tails", "500 tosses"] <- sum(e3 == 0)/500
+freq_table["Relative frequency of Heads", "500 tosses"] <- sum(e3 == 1)/500
+
+print(freq_table, box = TRUE,
+      quote = FALSE, digits = 2,
+      col.just = "center",
+      row.just = "center",
+      hline.after = TRUE,
+      vline.after = TRUE,
+      print.gap = 2,
+      box = TRUE)
+
+```
+
++---------------------+---------------------+---------------------+
+| Probability         | 100 tosses          | 500 tosses          |
++=====================+=====================+=====================+
+| Relative frequency  | \`\`\`r sum(e2 ==   | \`\`\`r sum(e3 ==   |
+| of Tails            | 0)/100 \`\`\`       | 0)/500 \`\`\`       |
++---------------------+---------------------+---------------------+
+| Relative frequency  | \`\`\`r sum(e2 ==   | \`\`\`r sum(e3 ==   |
+| of Heads            | 1)/100 \`\`\`       | 1)/500 \`\`\`       |
++---------------------+---------------------+---------------------+
+
+<hr/>
+
+# II. Rolling dice
+
+The probability of getting a number between 1 to 6 on a roll of a die is
+1/6 = 0.1666667. We can use R to simulate an experiment of rolling a die
+several times and compare our results with the theoretical probability.
+We can use the following command to tell R to roll a die 20 times:
+
+```{r}
+sample(1:6,20,rep=T) 
+```
+
+**We can write a function to roll a die n times**
+
+```{r}
+RollDie = function(n) { 
+  sample(1:6,n,rep=T)
+}
+d1=RollDie(50)
+d1
+```
+
+Now we can use the sum command to compare the results from this
+experiment to the theoretical probabilities. For example, in the above
+experiment the number of 3’s and its relative frequency is:
+
+```{r}
+sum(d1==3)
+```
+
+```{r}
+sum(d1==3)/50 
+```
+
+**This number 3 occurs `r sum(d1==3)` times and it's relative frequency
+is `r sum(d1==3)/50` which is quite close to 1/6** .
+
+**Relative Histogram**
+
+```{r}
+r<-hist(d1,breaks=c(0.5,1.5,2.5,3.5,4.5,5.5,6.5), 
+        prob=T,col="violet",
+        main="Histogram of 50 dice rolls (Group 2)",
+        border="white")
+
+label_pos <- r$density - 0.003
+
+text(r$mids,label_pos, r$counts, adj = c(.5, -.5), col = "brown")
+```
+
+# Questions
+
+**1. Use R to simulate an experiment of rolling a die 200 times. Print
+the relative histogram and write your name on it.**
+
+```{r}
+d2 = RollDie(200)
+d2
+```
+
+**Relative Histogram**
+
+```{r}
+r <- hist(d2, breaks = c(0.5,1.5,2.5,3.5,4.5,5.5,6.5), 
+          prob = TRUE, 
+          main = "Histogram of 200 dice rolls (Group 2)", 
+          col = "maroon", 
+          xlab = "Values", 
+          border = "white")
+
+label_pos <- r$density - 0.003
+
+text(r$mids,label_pos, r$counts, adj = c(.5, -.5), col = "brown")
+```
+
+**QUESTION 2 IS HANDLED AFTER QUESTION 3**
+
+**3. Repeat 2 for rolling a die 1000 @mes (do not print histogram).**
+
+```{r}
+d3 = RollDie(1000)
+d3
+```
+
+**2. Find the relative frequency of the numbers 1 to 6 in your
+experiment and fill in the table.**
+
+```{r}
+
+# Create table of frequencies
+dice_table <- matrix(NA, nrow = 6, ncol = 2, 
+                     dimnames = list(c("Relative frequency of 1", 
+                                       "Relative frequency of 2", 
+                                       "Relative frequency of 3", 
+                                       "Relative frequency of 4", 
+                                       "Relative frequency of 5", 
+                                       "Relative frequency of 6"), 
+                                     c("200 rolls", "1000 rolls")))
+
+# Frequencies
+dice_table["Relative frequency of 1", "200 rolls"] <- sum(d2 == 1)/200
+dice_table["Relative frequency of 2", "200 rolls"] <- sum(d2 == 2)/200
+dice_table["Relative frequency of 3", "200 rolls"] <- sum(d2 == 3)/200
+dice_table["Relative frequency of 4", "200 rolls"] <- sum(d2 == 4)/200
+dice_table["Relative frequency of 5", "200 rolls"] <- sum(d2 == 5)/200
+dice_table["Relative frequency of 6", "200 rolls"] <- sum(d2 == 6)/200
+
+dice_table["Relative frequency of 1", "1000 rolls"] <- sum(d3 == 1)/1000
+dice_table["Relative frequency of 2", "1000 rolls"] <- sum(d3 == 2)/1000
+dice_table["Relative frequency of 3", "1000 rolls"] <- sum(d3 == 3)/1000
+dice_table["Relative frequency of 4", "1000 rolls"] <- sum(d3 == 4)/1000
+dice_table["Relative frequency of 5", "1000 rolls"] <- sum(d3 == 5)/1000
+dice_table["Relative frequency of 6", "1000 rolls"] <- sum(d3 == 6)/1000
+
+print(dice_table, box = TRUE, 
+      quote = FALSE, 
+      digits = 2,
+      col.just = "center",
+      row.just = "center",
+      hline.after = TRUE,
+      vline.after = TRUE,
+      print.gap = 2)
+
+```
+
++----------------------+----------------------+----------------------+
+| Probability          | 200 rolls            | 1000 rolls           |
++======================+======================+======================+
+| Relative frequency   | \`\`\`r sum(d2 ==    | \`\`\`r sum(d3 ==    |
+| of 1                 | 1)/200 \`\`\`        | 1)/1000 \`\`\`       |
++----------------------+----------------------+----------------------+
+| Relative frequency   | \`\`\`r sum(d2 ==    | \`\`\`r sum(d3 ==    |
+| of 2                 | 2)/100 \`\`\`        | 2)/500 \`\`\`        |
++----------------------+----------------------+----------------------+
+| Relative frequency   | \`\`\`r sum(d2 ==    | \`\`\`r sum(d3 ==    |
+| of 3                 | 3)/200 \`\`\`        | 3)/1000 \`\`\`       |
++----------------------+----------------------+----------------------+
+| Relative frequency   | \`\`\`r sum(d2 ==    | \`\`\`r sum(d3 ==    |
+| of 4                 | 4)/200 \`\`\`        | 4)/1000 \`\`\`       |
++----------------------+----------------------+----------------------+
+| Relative frequency   | \`\`\`r sum(d2 ==    | \`\`\`r sum(d3 ==    |
+| of 5                 | 5)/200 \`\`\`        | 5)/1000 \`\`\`       |
++----------------------+----------------------+----------------------+
+| Relative frequency   | \`\`\`r sum(d2 ==    | \`\`\`r sum(d3 ==    |
+| of 6                 | 6)/200 \`\`\`        | 6)/1000 \`\`\`       |
++----------------------+----------------------+----------------------+
+
+<hr/>
+
+# III. Conditional Probabilities
+
+# Questions
+
+**1. Suppose that you are dealt 2 cards sequentially (face down) from a
+standard deck (52 cards). What is the probability that the first and
+second cards are Kings. Write a code in R to compute this probability**
+
+```{r}
+deck_cards <- 52 # Total Cards
+kings <- 4 # Total Kings
+probability_of_first_king <- kings/deck_cards
+probability_of_second_king <- (kings-1)/(deck_cards - 1)
+
+# Final Probability
+final_probability <- probability_of_first_king * probability_of_second_king
+final_probability
+
+```
+
+**Final Probability that the first and second cards are kings -\>
+`r final_probability`**
+
+<hr/>
+
+# Project 1
+
+# Group 2
+
+**Team Members**
+
+-   Bandari Shivani
+-   Bansal Vaibhav
+-   Bhagavatham Rishi Shanthan
+-   Bhosale Samidha
+
+**Coin Toss**
+
++---------------------+---------------------+---------------------+
+| Probability         | 100 tosses          | 500 tosses          |
++=====================+=====================+=====================+
+| Relative frequency  | \`\`\`r sum(e2 ==   | \`\`\`r sum(e3 ==   |
+| of Tails            | 0)/100 \`\`\`       | 0)/500 \`\`\`       |
++---------------------+---------------------+---------------------+
+| Relative frequency  | \`\`\`r sum(e2 ==   | \`\`\`r sum(e3 ==   |
+| of Heads            | 1)/100 \`\`\`       | 1)/500 \`\`\`       |
++---------------------+---------------------+---------------------+
+
+<hr/>
+
+**Rolling Dice**
+
++---------------------+---------------------+---------------------+
+| Probability         | 200 rolls           | 1000 rolls          |
++=====================+=====================+=====================+
+| Relative frequency  | \`\`\`r sum(d2 ==   | \`\`\`r sum(d3 ==   |
+| of 1                | 1)/200 \`\`\`       | 1)/1000 \`\`\`      |
++---------------------+---------------------+---------------------+
+| Relative frequency  | \`\`\`r sum(d2 ==   | \`\`\`r sum(d3 ==   |
+| of 2                | 2)/100 \`\`\`       | 2)/500 \`\`\`       |
++---------------------+---------------------+---------------------+
+| Relative frequency  | \`\`\`r sum(d2 ==   | \`\`\`r sum(d3 ==   |
+| of 3                | 3)/200 \`\`\`       | 3)/1000 \`\`\`      |
++---------------------+---------------------+---------------------+
+| Relative frequency  | \`\`\`r sum(d2 ==   | \`\`\`r sum(d3 ==   |
+| of 4                | 4)/200 \`\`\`       | 4)/1000 \`\`\`      |
++---------------------+---------------------+---------------------+
+| Relative frequency  | \`\`\`r sum(d2 ==   | \`\`\`r sum(d3 ==   |
+| of 5                | 5)/200 \`\`\`       | 5)/1000 \`\`\`      |
++---------------------+---------------------+---------------------+
+| Relative frequency  | \`\`\`r sum(d2 ==   | \`\`\`r sum(d3 ==   |
+| of 6                | 6)/200 \`\`\`       | 6)/1000 \`\`\`      |
++---------------------+---------------------+---------------------+
+
+<hr/>

@@ -1,0 +1,214 @@
+---
+title: 'Project 2 (EAS502 : Intro Prob Theory)'
+author: "Rishi Shanthan Bhagavatham"
+date: "05-02-2024"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+    
+
+**Submitted to : Dr. Vochita Mihai**
+<hr/>
+
+**I. For all the Question, please solve the problems using a code in R. Save the
+document according with the instructions provided in the attached document.**
+
+<hr/>
+## Question 1
+
+1). You are taking a 15-question multiple choice quiz and each question has 5 options
+(a, b, c, d, e) and you randomly guess every question.
+
+(a) How many questions do you expect to answer correct on average?
+(b) What is the probability that you get every question correct?
+(c) What is the probability that you get every question incorrect?
+(d) How many questions does one need to answer correctly in order score exactly a
+60%?
+(e) If a grade of 60% or lower is considered failing, then what is the probability of
+you failing?
+(f) If you need a grade of 80% or higher on this quiz to maintain a passing grade,
+what is the probability of you maintaining that passing grade?
+
+```{r}
+# Q1 a
+q1a_answer <- 15 * (1 / 5)
+cat("Number of questions we expect to answer correct on average:",q1a_answer)
+
+
+# Q1 b
+q1b_answer <- (1 / 5)^15
+cat("probability that we get every question correct:",q1b_answer)
+
+
+cat("Probability that we get every question correct (Using floor function):",floor(q1b_answer))
+
+# Q1 c
+q1c_answer <- ((5 - 1)/5)^15
+q1c_answer * 100
+cat("Probability that you get every question incorrect:",q1c_answer)
+
+# Q1 d
+q1d_answer <- 15 * 0.60
+cat("Questions does one need to answer correctly in order score exactly a 60% :",q1d_answer)
+
+# Q1 e
+q1e_answer <- pbinom(q = q1d_answer, size = 15, prob = 0.2)
+q1e_answer
+cat("Probability of we failing :",q1e_answer)
+
+# Q1 f
+q1f_answer <- pbinom(q = 11.85, size = 15, prob = .2, lower.tail = FALSE)
+cat("Probability of us maintaining that passing grade:",q1f_answer)
+```
+<hr/>
+
+## Question 2
+
+2). A fair die is rolled repeatedly. Let \( X \) be the numbers of rolls needed to obtain a 5 and \( Y \) the number of rolls needed to obtain a 6. Calculate the expected value of \( X \) given that \( Y = 2 \).
+
+```{r}
+p <- 1/6
+
+p_x_given_1 <- 1/5
+
+
+# E(X|X=1) is just 1, since we've rolled a 5 first
+E_X_given_X_1 <- 1
+
+# So we are looking for the expected value starting from roll 3
+E_X_given_X_geq_3 <- 1/p + 2 # We add 2 because we know two rolls have already occurred
+
+# Calculate the total expected value
+E_X_given_Y_2 <- E_X_given_X_1 * p_x_given_1 + E_X_given_X_geq_3 * (1 - p_x_given_1)
+
+cat("Expected value of X given Y=2 :",E_X_given_Y_2)
+
+```
+<hr/>
+
+## Question 3
+
+3). Assume IQ scores are normally distributed with a mean of 100 and a standard deviation of 15. If a person is randomly selected, find each of the requested probabilities. Here, \( X \), denotes the IQ of the randomly selected person.
+
+\item \(1.\ P(X > 65) \)
+\item \(2.\ P(X < 150) \)
+
+```{r}
+q3_mean <- 100
+q3_sd <- 15
+
+# Q3 a
+q3_a <- (1 - pnorm(65,q3_mean,q3_sd))
+cat("Value of P(X > 65) :",q3_a)
+
+# Q3 b
+q3_b <- pnorm(150,q3_mean,q3_sd)
+cat("Value of P(X < 150) :",q3_b)
+```
+<hr/>
+
+## Question 4
+
+4). Assume the same mean and standard deviation of IQ scores that was described in
+question 3.
+
+(a) A high school offers a special program for gifted students. In order to qualify,
+students must have IQ scores in the top 5%. What is the minimum qualifying
+IQ?
+(b) If one person is randomly selected, what is the probability that their IQ score
+is greater than 125?
+(c) What is the z-score for an IQ of 140?
+(d) A data value is considered “unusual” if it lies more than two standard deviations
+from the mean. Is an IQ of 140 considered unusual?
+(e) What is the probability of getting an IQ greater than 140?
+
+
+```{r}
+# Q4 a
+q4_a <- qnorm(0.95, q3_mean, q3_sd)
+cat("Minimum qualifying IQ :",q4_a)
+
+# Q4 b
+q4_b <- (1 - pnorm(125, q3_mean, q3_sd))
+cat("The IQ score is greater than 125 :",q4_b)
+
+# Q4 c
+q4_c <- (140 - q3_mean) / q3_sd
+cat("The z-score for an IQ of 140 :",q4_c)
+
+# Q4 d
+q4_d <- abs(140 - q3_mean) > 2 * q3_sd
+cat("Is an IQ of 140 considered unusual: ",q4_d)
+
+# Q4 e
+q4_e <- pnorm(140, q3_mean, q3_sd, lower.tail = FALSE)
+q4_e
+cat("Probability of getting an IQ greater than 140: ",q4_e)
+```
+<hr/>
+
+## Question 5
+
+5). 5. Suppose you own a catering company. You hire local college students as servers.
+Not being the most reliable employees, there is an 80% chance that any one server
+will actually show up for a scheduled event. For a wedding scheduled on Saturday,
+you need at least 5 servers.
+
+(a) Suppose you schedule 5 employees, what is the probability that all 5 come to
+work?
+(b) Suppose you schedule 7 employees, what is the probability that at least 5 come
+to work?
+(c) It is really important that you have at least 5 servers show up! How many
+employees should you schedule in order to be 99% confident that at least 5 show
+up?
+
+```{r}
+
+# Q5 a
+q5_a <- dbinom(5, 5, 4/5)
+q5_a * 100
+cat("Probability that all 5 come to work :",q5_a)
+
+# Q5 b
+q5_b <- 1 - pbinom(4, 7, 4/5)
+q5_b * 100
+cat("Probability that at least 5 come to work :",q5_b)
+
+# Q5 c
+for(q5_c in 5:20) {
+  prob_server_show_up <- 1 - pbinom(4, q5_c, 4/5)
+  if (prob_server_show_up >= 0.99) {
+    break
+  }
+}
+cat("Number of employees we can schedule in order to be 99% confident that at least 5 show up :",q5_c)
+
+
+library(ggplot2)
+
+scheduled <- 5:20
+
+cumulative_probabilities <- 1 - pbinom(4, scheduled, 4/5)
+
+data_frame <- data.frame(Scheduled = scheduled, Probability = cumulative_probabilities)
+
+ggplot(data_frame, aes(x = Scheduled, y = Probability)) +
+  geom_line() + # Line plot
+  geom_point() + # Add points to the line plot
+  geom_hline(yintercept = 0.99, linetype="dashed", color = "red") + # Line for 99% confidence
+  scale_y_continuous(labels = scales::percent_format()) + # Convert y-axis to percentage
+  theme_minimal() +
+  labs(title = "Probability of At Least 5 Servers Showing Up",
+       x = "Number of Employees Scheduled",
+       y = "Probability of At Least 5 Showing Up")
+
+```
+<hr/>
+
+
+
