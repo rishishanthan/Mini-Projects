@@ -1,5 +1,5 @@
-function [a, n] = rbhagava_midterm_p1(fdf, a0, x, y, tol)
-%RBHAGAVA_MIDTERM_P1 Matlab function that computes a non-linear regression using Guass-Newton method
+function [a, n] = p1_solver(fdf, a0, x, y, tol)
+%P1_SOLVER Matlab function that computes a non-linear regression using Guass-Newton method
 %
 % Inputs:
 %   fdf - An external function which returns the residual vector and Jacobian matrix. 
@@ -43,6 +43,6 @@ function [a, n] = rbhagava_midterm_p1(fdf, a0, x, y, tol)
         end
     end
     n = count;
-end %rbhagava_midterm_p1
+end %p1_solver
 
 
