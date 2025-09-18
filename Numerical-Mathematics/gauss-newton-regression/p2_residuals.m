@@ -1,5 +1,5 @@
-function [r, J] = rbhagava_midterm_p2(af, x, y)
-%RBHAGAVA_MIDTERM_P2 Matlab function fitting logistic regression model
+function [r, J] = p2_residuals(af, x, y)
+%P2_RESIDUALS Matlab function fitting logistic regression model
 %
 % Inputs:
 %   af - The coefficient list.
@@ -21,5 +21,5 @@ function [r, J] = rbhagava_midterm_p2(af, x, y)
         r(i) = y(i) - f(x(i));
     end
     
-end %rbhagava_midterm_p2
+end %p2_residuals
 
