@@ -1,5 +1,5 @@
 function x = rbhagava_final_p3(pdList, m)
-%RBHAGAVA_FINAL_P3 function generates matrix of Latin Hypercube samples from given distributions
+%SAMPLER_LHS function generates matrix of Latin Hypercube samples from given distributions
 %
 %   Inputs:
 %       pdList - This is a cell array that contains objects representing different probability distributions.
@@ -15,4 +15,4 @@ function x = rbhagava_final_p3(pdList, m)
         p = (rand(m, 1) + (0:m-1)') / m;  
         x(:, j) = icdf(pd, p);      
     end
-end %rbhagava_final_p3
+end %sampler_lhs
