@@ -1,8 +1,8 @@
-function [result] = rbhagava_pp12(f)
-%RBHAGAVA_PP12 MATLAB Unit test to test pp11 function
+function [result] = test_newton(f)
+%TEST_NEWTON MATLAB Unit test to test newton_raphson function
 %
 % Inputs:
-%   f - function handle to the rbhagava_pp11 function
+%   f - function handle to the newton_raphson function
 %
 % Outputs:
 %   result - returns 1/0/-1 according to the test results
@@ -23,5 +23,5 @@ function [result] = rbhagava_pp12(f)
     catch
         result = -1;
     end
-end %rbhagava_pp12
+end %test_newton
 
