@@ -1,8 +1,8 @@
-function [result] = rbhagava_pp10(f)
-%RBHAGAVA_PP10 MATLAB Unit test for pp9 function
+function [result] = test_midpoint(f)
+%TEST_MIDPOINT MATLAB Unit test for midpoint_rule function
 %   
 %   Inputs:
-%       f -  input function that is rbhagava_pp9 that is used to perform unit test 
+%       f -  input function that is midpoint_rule that is used to perform unit test 
 %
 %   Outputs:
 %       val - Returns 1/0/-1 according to the test results
@@ -22,5 +22,5 @@ function [result] = rbhagava_pp10(f)
         result = -1;
     end
     
-end% rbhagava_pp10
+end %test_midpoint
 
