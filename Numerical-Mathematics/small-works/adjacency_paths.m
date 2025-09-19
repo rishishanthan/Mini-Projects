@@ -1,5 +1,5 @@
-function [num] = rbhagava_pp7(A, i, j, len)
-%RBHAGAVA_PP7 MATLAB function that determines the total number of paths of a given length or less connecting two points i to j  in a matrix.
+function [num] = adjacency_paths(A, i, j, len)
+%ADJACENCY_PATHS MATLAB function that determines the total number of paths of a given length or less connecting two points i to j  in a matrix.
 %
 % Inputs:
 %   A - The Adjacency Matrix
@@ -23,5 +23,5 @@ function [num] = rbhagava_pp7(A, i, j, len)
 
     fprintf('The total number of paths of a given length %d or less is %d', len, num)
 
-end %rbhagava_pp7
+end %adjacency_paths
 
