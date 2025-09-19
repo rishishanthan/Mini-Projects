@@ -1,4 +1,4 @@
-# Numerical Mathematics (EAS 501)
+# Numerical Mathematics 
 
 This repository contains small projects and works from **Numerical Mathematics**.
 All implementations are written in **MATLAB from scratch** without relying on built-in solvers, to demonstrate a deep understanding of core numerical methods.
