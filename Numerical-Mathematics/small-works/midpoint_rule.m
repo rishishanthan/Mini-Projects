@@ -1,5 +1,5 @@
-function [val] = rbhagava_pp9(f, x)
-%RBHAGAVA_PP9 MATLAB function that uses the midpoint rule to integrate a function.
+function [val] = midpoint_rule(f, x)
+%MIDPOINT_RULE MATLAB function that uses the midpoint rule to integrate a function.
 %   
 %   Inputs:
 %       f-  function handle
@@ -24,5 +24,5 @@ function [val] = rbhagava_pp9(f, x)
         val = val + f(mid(i)) * dx(i);
     end 
 
-end%rbhagava_pp9
+end %midpoint_rule
 
