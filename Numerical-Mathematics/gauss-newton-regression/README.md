@@ -25,8 +25,6 @@ The Jacobian is derived analytically for faster and more stable convergence.
 - `p1_solver.m` — Iterative Gauss–Newton solver with tolerance and max-iteration control  
 - `p2_residuals.m` — Residuals and Jacobian for the logistic model  
 
-*(Depending on your setup, these may appear as `rbhagava_midterm_p1.m` and `rbhagava_midterm_p2.m` — same logic, just different names.)*
-
 ---
 
 ## How to Run
