@@ -1,5 +1,5 @@
-function [f] = rbhagava_pp3(n)
-%RBHAGAVA_PP3 Computing the factorial of a number using while-loop
+function [f] = factorial_while(n)
+%FACTORIAL_WHILE Computing the factorial of a number using while-loop
 %   n! = 1 x 2 x 3 x .... x n
 %
 % Inputs:
@@ -22,5 +22,5 @@ function [f] = rbhagava_pp3(n)
         end
     end
 
-end %rbhagava_pp3
+end %factorial_while
 
