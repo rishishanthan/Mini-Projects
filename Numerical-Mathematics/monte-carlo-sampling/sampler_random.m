@@ -1,5 +1,5 @@
-function x = rbhagava_final_p2(pdList, m)
-%RBHAGAVA_FINAL_P2 function is crafted to create a matrix of random samples from specified probability distributions
+function x = sampler_random(pdList, m)
+%SAMPLER_RANDOM function is crafted to create a matrix of random samples from specified probability distributions
 %
 %   Inputs:
 %       pdList - A cell array containing objects that represent various probability distributions.
@@ -15,4 +15,4 @@ function x = rbhagava_final_p2(pdList, m)
         pd = pdList{j};
         x(:, j) = random(pd, m, 1); 
     end
-end %rbhagava_final_p2
+end %sampler_random
