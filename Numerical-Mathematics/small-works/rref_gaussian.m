@@ -1,5 +1,5 @@
-function [R] = rbhagava_pp8(A)
-%RBHAGAVA_PP8 Matlab function that returns the Reduced Row Echelon Form of a matrix using Gaussian Elimination with pivoting.
+function [R] = rref_gaussian(A)
+%RREF_GAUSSIAN Matlab function that returns the Reduced Row Echelon Form of a matrix using Gaussian Elimination with pivoting.
 %
 % Inputs:
 %   A - The RREF of matrix A.
@@ -31,4 +31,4 @@ function [R] = rbhagava_pp8(A)
         j = j+1;
     end
     R = A;
-end %rbhagava_pp8
+end %rref_gaussian
