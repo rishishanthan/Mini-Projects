@@ -1,5 +1,5 @@
-function D = rbhagava_final_p1(f, pdList, N, sampleFcn, m)
-%RBHAGAVA_FINAL_P1 function is designed to create a dataset by simulating values from a specified model function using the Monte Carlo technique
+function D = simulate_dataset(f, pdList, N, sampleFcn, m)
+%SIMULATE_DATASET function is designed to create a dataset by simulating values from a specified model function using the Monte Carlo technique
 %
 %   Inputs:
 %       f - This is a function handle pointing to the model function you want to use.
@@ -28,4 +28,4 @@ function D = rbhagava_final_p1(f, pdList, N, sampleFcn, m)
         end
         count = count + num;
     end
-end %rbhagava_final_p1
+end %simulate_dataset
