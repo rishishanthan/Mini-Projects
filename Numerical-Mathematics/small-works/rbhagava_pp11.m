@@ -1,5 +1,5 @@
-function [x] = rbhagava_pp11(g, x0, eps, delta, itermax)
-%RBHAGAVA_PP11 MATLAB function using undamped Newton-Raphson's method to determine the root
+function [x] = newton_raphson(g, x0, eps, delta, itermax)
+%NEWTON_RAPHSON MATLAB function using undamped Newton-Raphson's method to determine the root
 %
 % Inputs:
 %   g - The function handle g has the following call and returns two variables: [f, fx] = g(x) where f is the function and fx is the derivative
@@ -29,5 +29,5 @@ function [x] = rbhagava_pp11(g, x0, eps, delta, itermax)
     if n == itermax
         error("Maximum iterations exceeded")
     end
-end %rbhagava_pp11
+end %newton_raphson
 
