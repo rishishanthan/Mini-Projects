@@ -1,5 +1,5 @@
-function [f] = rbhagava_pp2(n)
-%RBHAGAVA_PP2 Computing the factorial of a number using for-loop
+function [f] = factorial_for(n)
+%FACTORIAL_FOR Computing the factorial of a number using for-loop
 %   n! = 1 x 2 x 3 x .... x n
 %
 % Inputs:
@@ -20,4 +20,4 @@ function [f] = rbhagava_pp2(n)
         end
     end
 
-end %rbhagava_pp2
+end %factorial_for
