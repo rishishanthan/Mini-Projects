@@ -1,5 +1,5 @@
-function [l, v] = rbhagava_pp14(A, v0, tol, itermax)
-%RBHAGAVA_PP14 This function computes eigenvalues and eigenvectors using the Rayleigh-Quotient iteration method.
+function [l, v] = rayleigh_quotient(A, v0, tol, itermax)
+%RAYLEIGH_QOUTIENT This function computes eigenvalues and eigenvectors using the Rayleigh-Quotient iteration method.
 %
 % Inputs:
 %   A - the matrix 
@@ -33,4 +33,4 @@ function [l, v] = rbhagava_pp14(A, v0, tol, itermax)
     if iter == itermax
         error('Maximum number of iterations is exceeded');
     end
-end %rbhagava_pp14
+end %rayleigh_quotient
