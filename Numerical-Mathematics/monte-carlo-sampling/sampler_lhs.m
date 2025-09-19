@@ -1,4 +1,4 @@
-function x = rbhagava_final_p3(pdList, m)
+function x = sampler_lhs(pdList, m)
 %SAMPLER_LHS function generates matrix of Latin Hypercube samples from given distributions
 %
 %   Inputs:
