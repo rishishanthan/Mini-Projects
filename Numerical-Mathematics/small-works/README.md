@@ -1,4 +1,4 @@
-# Small MATLAB works (Numerical Mathematics)
+# Small MATLAB works on Numerical Mathematics
 
 This folder contains a collection of small MATLAB functions that I have worked on some needed Math methods.  
 They illustrate core ideas in **numerical methods, linear algebra, root finding, integration, graph theory, and basic MATLAB programming**.
