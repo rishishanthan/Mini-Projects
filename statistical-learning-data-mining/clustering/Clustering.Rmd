@@ -1,0 +1,92 @@
+---
+title: "Clustering"
+author: "Rishi Shanthan Bhagavatham"
+date: "2024-09-10"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# This step is to load the USArrests data
+data("USArrests")
+head(USArrests)
+
+#The Mean of each Feature
+apply(USArrests , 2 , mean)
+#The Variance of each Feature
+apply(USArrests , 2 , var)
+```
+
+a)
+```{r}
+#First we need to compute the Distance Matrix
+dist_matrix <- dist(USArrests, method = "euclidean")
+
+#Perform hierarchical clustering using complete linkage
+hc_complete <- hclust(dist_matrix, method = "complete")
+
+#Then Plot the dendrogram
+plot(hc_complete, main = "Hierarchical Clustering Dendrogram (Complete Linkage)", xlab = "", sub = "", labels = rownames(USArrests), cex = 0.7)
+
+```
+
+
+b)
+```{r}
+#First cut the dendrogram to form three clusters
+clusters <- cutree(hc_complete, k = 3)
+
+#Create a data frame with the cluster assignments
+clustered_states <- data.frame(State = rownames(USArrests), Cluster = clusters)
+clustered_states <- clustered_states[order(clustered_states$Cluster), ]
+
+
+#Display the states in each cluster
+cluster_list <- split(clustered_states$State, clustered_states$Cluster)
+cluster_list
+```
+
+c)
+```{r}
+
+#Scale the variables to have standard deviation one
+scaled_data <- scale(USArrests)
+
+#Then we need to compute the Distance Matrix
+dist_matrix_scaled <- dist(scaled_data, method = "euclidean")
+
+#Perform hierarchical clustering using complete linkage
+hc_complete_scaled <- hclust(dist_matrix_scaled, method = "complete")
+
+#Then Plot the dendrogram
+plot(hc_complete_scaled, main = "Hierarchical Clustering Dendrogram (Complete Linkage, Scaled Data)", xlab = "", sub = "", labels = rownames(USArrests), cex = 0.7)
+
+```
+
+
+d)
+```{r}
+#Lets compare the dentrograms of a three cluster group from the scaled data for a reference
+#So that cut the dendrogram of the scaled data to form three clusters
+clusters_scaled <- cutree(hc_complete_scaled, k = 3)
+
+#Create a data frame with the cluster assignments
+clustered_states_scaled <- data.frame(State = rownames(USArrests), Scaled_Cluster = clusters_scaled)
+clustered_states_scaled <- clustered_states_scaled[order(clustered_states_scaled$Scaled_Cluster), ]
+
+# Display the states in each cluster for scaled data
+scaled_cluster_list <- split(clustered_states_scaled$State, clustered_states_scaled$Scaled_Cluster)
+scaled_cluster_list
+
+#Compare the original and scaled clustering results
+comparison <- merge(clustered_states, clustered_states_scaled, by = "State")
+comparison <- comparison[order(comparison$Cluster), ]
+comparison
+```
+It's clear that the clusters are different among the scaled and the regular data. Generally, scaling the variables ensures that each variable contributes equally to the distance calculations. Without scaling, variables with larger variances can dominate the clustering process, potentially leading to misleading clusters. In the USArrests dataset, the variables have different ranges, so scaling is generally recommended to prevent any single variable from having an outsized influence on the clustering outcome.
