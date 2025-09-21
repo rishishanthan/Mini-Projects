@@ -1,0 +1,360 @@
+---
+title: "Device Classification"
+author: "Rishi Shanthan Bhagavatham"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```
+
+Notes on R:
+-	For the elastic net model, what we called λ in the videos, glmnet calls “alpha”; you can get a range of results by varying alpha from 1 (lasso) to 0 (ridge regression) [and, of course, other values of alpha in between].
+
+-	In a function call like glmnet(x,y,family=”mgaussian”,alpha=1) the predictors x need to be in R’s matrix format, rather than data frame format.  You can convert a data frame to a matrix using as.matrix – for example, x <- as.matrix(data[,1:n-1])
+
+- Rather than specifying a value of T, glmnet returns models for a variety of values of T. 
+
+```
+
+
+```{r}
+library(ISLR2)
+library(ggplot2)
+library(MASS)
+library(car)
+library(class)
+```
+
+
+# Question: Used Phones & Tablets Pricing Dataset
+
+The used and refurbished device market has grown considerably over the past decade as it provide cost-effective alternatives to both consumers and businesses that are looking to save money when purchasing one. Maximizing the longevity of devices through second-hand trade also reduces their environmental impact and helps in recycling and reducing waste. Here is a sample dataset of normalized used and new pricing data of refurbished / used devices.
+
+- device_brand: Name of manufacturing brand
+- os: OS on which the device runs
+- screen_size: Size of the screen in cm
+- 4g: Whether 4G is available or not
+- 5g: Whether 5G is available or not
+- front_camera_mp: Resolution of the rear camera in megapixels
+- back_camera_mp: Resolution of the front camera in megapixels
+- internal_memory: Amount of internal memory (ROM) in GB
+- ram: Amount of RAM in GB
+- battery: Energy capacity of the device battery in mAh
+- weight: Weight of the device in grams
+- release_year: Year when the device model was released
+- days_used: Number of days the used/refurbished device has been used
+- normalized_new_price: Normalized price of a new device of the same model
+- normalized_used_price (response variable): Normalized price of the used/refurbished device
+
+Read the data and answer the questions below:
+
+```{r}
+# Loading of the data
+set.seed(100)
+used_devices= read.csv("used_device_data.csv", header=TRUE, sep=",")
+
+used_devices$device_brand=as.factor(used_devices$device_brand)
+used_devices$os=as.factor(used_devices$os)
+used_devices$X4g=as.factor(used_devices$X4g)
+used_devices$X5g=as.factor(used_devices$X5g)
+
+#Dividing the dataset into training and testing datasets
+testRows = sample(nrow(used_devices),0.2*nrow(used_devices))
+testData = used_devices[testRows, ]
+trainData = used_devices[-testRows, ]
+row.names(trainData) <- NULL
+head(trainData)
+
+```
+
+## Part 1 [9 pts]: EXPLORATORY DATA ANALYSIS
+
+a). (3 pts) Using trainData, create a boxplot of response variable “normalized_used_price” and “os”, with “normalized_used_price” on the vertical axis. Interpret the plot.Which os devices are the most expensive?
+
+```{r}
+set.seed(100)
+# Read the data
+trainData <- read.csv("used_device_data.csv")
+
+# Creating a boxplot of normalized_used_price against os
+ggplot(trainData, aes(x = os, y = normalized_used_price)) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Normalized Used Price by OS", x = "Operating System", y = "Normalized Used Price")
+
+```
+
+**Answer:**
+In this boxplot we should look at several aspects:
+
+Median Price(Center Line of Box): The median indicates the typical value of used devices for each OS.The higher the median, the higher the typical price for devices with that OS.
+In this plot, iOS devices have a higher median price compared to Android, Others, and Windows, which indicates that typically, iOS devices are more expensive on the used market.
+
+Interquartile Range of Prices (Height of Box): A larger interquartile range indicates more variability in the prices of devices with that OS.
+iOS shows a narrower interquartile range but a higher overall median, suggesting less variability in used price but at a higher typical price point.
+Android shows a wide range, including lower values and some high outliers, suggesting variability in the model qualities or conditions.
+Others and Windows have lower medians and a narrower range compared to iOS, indicating generally lower prices.
+
+Outliers: Long outliers can indicate extreme values which could suggest rare expensive or cheap models.
+iOS and Android both exhibit outliers above the upper quartile, which could represent premium models or devices in exceptionally good condition.
+
+Based on this, the OS with the highest median and possibly with the highest upper quartile and outliers typically would be considered the most expensive on average.
+
+Conclusion:
+iOS devices are generally the most expensive in the used market according to the following dataset. They maintain higher median prices compared to other OS categories. This could be reflective of a higher initial price, perceived quality, or longer lifespan, which makes them retain more value even when used.
+
+
+
+b). (6 pts) Using `trainData`, create a scatterplot matrix and a correlation table that includes the following continuous variables: `battery b) front_camera_mp c) weight`
+Does there appear to be multicollinearity among these three variables? Include your reasoning.
+
+```{r}
+set.seed(100)
+# Plotting individual scatter plots
+pairs(trainData[,c("battery", "front_camera_mp", "weight")])
+
+# Correlation table
+cor(trainData[,c("battery", "front_camera_mp", "weight")])
+
+```
+
+**Answer**:
+If we look for the correlation coefficients in the correlation matrix, a value close to ±1 indicates strong multi-collinearity. Values close to +1 or -1 indicate strong positive or negative correlation, respectively. High absolute values (e.g., greater than 0.7 or 0.8) suggest potential problems with multi-collinearity.
+
+In the correlation between Battery and Weight, the correlation coefficient is approximately 0.717, which suggests a strong positive correlation. It is substantial enough to be cautious about multi-collinearity when both variables are included in the same regression model.
+
+For the most part, Front Camera MP does not appear to contribute to multi-collinearity concerns based on its low correlations with both Battery(0.340) and Weight(-0.015).
+
+
+## Part 2 [8 pts]: MULTIPLE LINEAR REGRESSION
+
+a). (6 pts) Create a multiple regression model using “normalized_used_price” as the response variable and all the predictors. Call it model1. Display the summary of the `model`.
+
+  - Which coefficients are statistically significant at the significance level of 0.05?
+
+  - Interpret the estimated coefficient of days_used and osWindows in the context of the problem. Mention any assumptions you make about other predictors clearly when stating the interpretation.
+
+
+```{r}
+set.seed(100)
+model1 <- lm(normalized_used_price ~ ., data = trainData)
+summary(model1)
+
+```
+
+**Answer**: According to the model, device_brandCelkon, device_brandRealme, device_brandXiaomi, osOthers, screen_size, X4gyes, rear_camera_mp, front_camera_mp, ram, battery, weight, release_year, normalized_new_price are statistically significant at the significance level of 0.05.
+
+For days_used the coefficient (Estimate = 0.00003588) is not statistically significant (p-value = 0.16817), suggesting that the number of days a device has been used does not have a significant impact on its normalized used price within the context of this model. This might indicate that the effect of usage duration is minimal compared to other factors like technical specifications and brand.
+
+osWindows: The coefficient (Estimate = -0.01713) also shows no significant impact (p-value = 0.65244), suggesting that having Windows as an OS, compared to the baseline OS (likely Android, if not otherwise specified), does not significantly alter the used price.
+
+
+b). (2 pts) Check model1 for multicollinearity using variance inflation factor (vif). Is multicollinearity a problem.Explain your conclusion.
+
+```{r}
+set.seed(100)
+vif(model1)
+
+
+```
+
+**Answer**:
+Values of VIF that exceed 10 are often regarded as indicating multi-collinearity.
+device_brand have a high VIF of 87.69 indicates significant multi-collinearity. This is expected as brand categories are likely to be highly correlated with each other and with other device features.
+
+os also have VIF of 38.08 also suggests substantial multi-collinearity among different operating systems.
+
+screen_size have a VIF of 7.17 suggests very less moderate multi-collinearity, which might be due to its relationship with other size-related features like weight.
+
+This states that multi-collinearity is a problem
+
+_______________
+
+## Part 3 [30 pts]: VARIABLE SELECTION
+
+a) (12 pts) Conduct bestsubset selection, forward, backward step-wise regression on model1 using AIC (assume no controlling variables), and all the selected model `model2, model3, and model4`, respectively. Display the summary of the model. Note: Do not forget to put “trace=F” in order to prevent long printed outputs.
+
+  - What is the AIC and BIC of the selected model?
+
+  - Which of the original variables are selected?
+  
+```
+You may use different methods other than the ones we used on the class. For example, using step(), see https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/step
+```
+
+```{r}
+set.seed(100)
+library(leaps) # For best subset selection
+
+# Best Subset Selection
+model2 <- regsubsets(normalized_used_price ~ ., data = trainData, nvmax = 15)
+summary(model2)
+
+# Forward Stepwise Regression
+model3 <- step(model1, direction = "forward", scope = formula(model1), trace = F)
+
+# Backward Stepwise Regression
+model4 <- step(model1, direction = "backward", trace = F)
+
+# Display summary and AIC, BIC for selected models
+summary(model3)  # model using forward stepwise
+summary(model4)  # model using backward stepwise
+AIC(model3)
+BIC(model4)
+AIC(model3)
+BIC(model4)
+```
+
+**Answer**:
+For model 2 -215.1083 is the AIC, 83.17101 is the BIC
+For model 3 -217.7044 is the AIC, 56.22553 is the BIC
+The selected variables of the model are depicted above.
+
+b).(14 pts) Perform LASSO and RIDGE regression on the dataset “trainData” .Use `cv.glmnet()` to find the lambda value that minimizes the cross-validation error using 10 fold CV.
+
+Answer the following questions for both models.
+
+  - State the value of the optimal lambda.
+
+  - Fit the model with 100 values for lambda.
+
+  - Extract coefficients at the optimal lambda. Which coefficients are selected? Compare the number of coefficients selected by both the models. Why are you seeing this behavior?
+
+  - Plot the coefficient path for both the models and compare.
+
+```  
+ See https://www.science.smith.edu/~jcrouser/SDS293/labs/lab10-r.html 
+ 
+ Remember to use as.matrix() to process categorical predictors
+```
+
+```{r}
+set.seed(100)
+library(glmnet)
+
+# Prepare the matrix format for glmnet
+x <- model.matrix(normalized_used_price ~ ., data = trainData)[,-1]
+y <- trainData$normalized_used_price
+
+# LASSO and Ridge Regression using cross-validation
+cv_fit_lasso <- cv.glmnet(x, y, alpha = 1, nfolds = 10)  # LASSO
+cv_fit_ridge <- cv.glmnet(x, y, alpha = 0, nfolds = 10)  # Ridge
+
+# Optimal lambda
+lambda_lasso_opt <- cv_fit_lasso$lambda.min
+lambda_ridge_opt <- cv_fit_ridge$lambda.min
+
+print(lambda_lasso_opt)
+print(lambda_ridge_opt)
+
+# Coefficients at optimal lambda
+coef(cv_fit_lasso, s = lambda_lasso_opt)
+coef(cv_fit_ridge, s = lambda_ridge_opt)
+
+
+# Plotting coefficient paths
+plot(cv_fit_lasso)
+plot(cv_fit_ridge)
+
+```
+
+**Answer**: The optimal value for Ridge Regression is 0.001139361, and for Lasso Regression is 0.04818633. The selected coefficients are depicted above.
+
+c).(4 pts) Apply Principal Component Analysis and then create a regression model using the first few principal components, name it `pca_model`.
+
+```
+You can use the R function prcomp for PCA. (Note that to first scale the data, you can include scale. = TRUE to scale as part of the PCA function. Don’t forget that, to make a prediction for the new city, you’ll need to unscale the coefficients (i.e., do the scaling calculation in reverse)!)
+```
+
+```{r}
+set.seed(100)
+library(pls)
+
+pca_model <- pcr(normalized_used_price ~ ., data = trainData, scale. = TRUE, validation = "CV")
+summary(pca_model)
+coef(pca_model, ncomp = 5)
+
+
+```
+
+
+## Part 4 [24 pts]: PREDICTION MODEL COMPARISON
+
+a).(14 pts) Using the testData, use the following models to predict the normalized price of the devices:
+
+- model1 (Part 2a)
+
+- model2 (Part 3a)
+
+- model3 (Part 3a)
+
+- model4 (Part 3a)
+
+- Lasso (Part 3b)
+
+- Ridge (Part 3b)
+
+- pca_model (Part 3c)
+
+Show the first five predictions using each model along with their true values. Are the values different?
+
+
+
+```{r}
+# Predictions
+predictions_model1 <- predict(model1, newdata = testData)
+predictions_model2 <- model.matrix(normalized_used_price ~ ., data = testData)[,names(coef(model2, 15))]%*%coef(model2, 15)
+predictions_model3 <- predict(model3, newdata = testData)
+predictions_model4 <- predict(model4, newdata = testData)
+predictions_lasso <- predict(cv_fit_lasso, s = "lambda.min", newx = model.matrix(normalized_used_price ~ ., data = testData)[,-1])
+predictions_ridge <- predict(cv_fit_ridge, s = "lambda.min", newx = model.matrix(normalized_used_price ~ ., data = testData)[,-1])
+
+
+predictions_pca <- predict(pca_model, newdata = testData)
+
+# Combining first five predictions from each model
+first_five <- data.frame(
+  True = testData$normalized_used_price[1:5],
+  Model1 = predictions_model1[1:5],
+  Model2 = predictions_model2[1:5],
+  Model3 = predictions_model3[1:5],
+  Model4 = predictions_model4[1:5],
+  Lasso = as.vector(predictions_lasso[1:5]),
+  Ridge = as.vector(predictions_ridge[1:5]),
+  PCA = predictions_pca[1:5]
+)
+
+print(first_five)
+
+```
+
+**Answer**:All the predicted values seems to be almost same, very close having a less difference.
+
+b). (10 pts) Compare the predictions using mean squared prediction error. Which model performed the best? Reasoning your answer and discussion your choice(s).
+
+```{r}
+set.seed(100)
+# Calculating MSPE for each model
+mspe_model1 <- mean((predictions_model1 - testData$normalized_used_price)^2)
+mspe_model2 <- mean((predictions_model2 - testData$normalized_used_price)^2)
+mspe_model3 <- mean((predictions_model3 - testData$normalized_used_price)^2)
+mspe_model4 <- mean((predictions_model4 - testData$normalized_used_price)^2)
+mspe_lasso <- mean((as.vector(predictions_lasso) - testData$normalized_used_price)^2)
+mspe_ridge <- mean((as.vector(predictions_ridge) - testData$normalized_used_price)^2)
+mspe_pca <- mean((predictions_pca - testData$normalized_used_price)^2)
+
+# Print MSPEs
+mspe_data <- data.frame(Model1 = mspe_model1, Model2 = mspe_model2, Model3 = mspe_model3, Model4 = mspe_model4, Lasso = mspe_lasso, Ridge = mspe_ridge, PCA = mspe_pca)
+print(mspe_data)
+
+```
+
+**Answer**:The PCA-based model performs the worst among all the models with the highest MSPE. This might be due to the loss of information inherent in dimensionality reduction. When reducing the number of variables using PCA, some relevant predictive information might be lost, which affects the model's predictive power.
+Model4 shows the lowest MSPE among all the models with a value of 0.0525348. A lower MSPE indicates that the model has a better fit and predicts more accurately on the test data.
+
